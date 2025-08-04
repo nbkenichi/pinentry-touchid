@@ -235,7 +235,8 @@ func passwordPrompt(s pinentry.Settings) ([]byte, error) {
 		p.Set("PROMPT", "PIN")
 	}
 	if s.RepeatPrompt != "" {
-		p.Set("REPEAT", s.RepeatPrompt)
+// avoid opening two passphrase fields. force one
+//		p.Set("REPEAT", s.RepeatPrompt)
 	}
 	p.Set("REPEATERROR", s.RepeatError)
 
@@ -320,6 +321,21 @@ func GetPIN(authFn AuthFunc, promptFn PromptFunc, logger *log.Logger) GetPinFunc
 				email = keyID
 			}
 		}
+
+		if (keyID == "") {
+			logger.Printf("KeyID is empty. start fallback.")
+			pin, err := promptFn(s)
+			if err != nil {
+				logger.Printf("Error calling pinentry program (%s): %s", pinentryBinary.GetBinary(), err)
+			}
+
+			if len(pin) == 0 {
+				logger.Printf("pinentry-mac didn't return a password")
+				return "", assuanError(fmt.Errorf("pinentry-mac didn't return a password"))
+			}
+			return string(pin), nil
+		}
+
 
 		// Drop the optional 0x prefix from keyID (--keyid-format)
 		// https://www.gnupg.org/documentation/manuals/gnupg/GPG-Configuration-Options.html
