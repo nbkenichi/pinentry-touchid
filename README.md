@@ -4,6 +4,8 @@
 - Prevent pinentry-mac from opening two passphrase fileds
 - Suppress errors when KeyID is empty
 
+## [pinentry-mac-touchid](https://github.com/nbkenichi/pinentry-mac-touchid) is recommended more. 🫆
+
 > **🚀 This fork includes critical fixes for GnuPG 2.4+ compatibility**
 >
 > These fixes resolve errors including "error: gpg failed to sign the data", "failed to unprotect the secret key: Operation cancelled", and "You may want to update to a newer pinentry".
